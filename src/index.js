@@ -1,33 +1,31 @@
-const express = require("express");
-const dotenv = require('dotenv');
-const mongoose = require("mongoose");
-const routes = require("./routes");
-const cors = require("cors")
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-dotenv.config()
-const app = express()
-console.log(`${process.env.MONGO_DB}`)
-const port = process.env.PORT || 3001
-app.get('/', (req, res) => {
-    res.send('Hello world')
-})
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+// import 'antd/dist/antd.css';
+import { persistor, store } from './redux/store'
+import { Provider } from 'react-redux'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { PersistGate } from 'redux-persist/integration/react'
 
-app.use(cors())
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb' }));
-app.use(bodyParser.json())
-app.use(cookieParser())
+const root = ReactDOM.createRoot(document.getElementById('root'));
+const queryClient = new QueryClient()
+root.render(
+  // <React.StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
+  // </React.StrictMode>
+);
 
-routes(app);
-mongoose.connect(`${process.env.MONGO_DB}`)
-    .then(() => {
-        console.log("connect success")
-    })
-    .catch((err) => {
-        console.log(err)
-    })
-console.log("client_id", process.env.CLIENT_ID)
-app.listen(port, () => {
-    console.log("server's port running:", + port)
-})
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
