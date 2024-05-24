@@ -9,7 +9,7 @@ dotenv.config()
 require('./passport')
 const app = express()
 
-console.log(`${process.env.MONGO_DB}`)
+// console.log(`${process.env.MONGO_DB}`)
 const port = process.env.PORT || 3001
 app.get('/', (req, res) => {
     res.send('Hello world')
@@ -29,7 +29,7 @@ mongoose.connect(`${process.env.MONGO_DB}`)
     .catch((err) => {
         console.log(err)
     })
-console.log("client_id", process.env.CLIENT_ID)
+// console.log("client_id", process.env.CLIENT_ID)
 app.listen(port, () => {
     console.log("server's port running:", + port)
 })

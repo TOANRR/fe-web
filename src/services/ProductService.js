@@ -1,21 +1,24 @@
 const Product = require("../models/ProductModel")
 const { ObjectId } = require('mongodb');
 const Review = require("../models/ReviewModel");
-
+const axios = require('axios');
+const dotenv = require('dotenv');
+dotenv.config()
 const createProduct = (newProduct) => {
     return new Promise(async (resolve, reject) => {
-        const { name, images, type, category, price, description, sizes, discount } = newProduct
+        const { name, images, type, category, price, description, sizes, discount } = newProduct;
         try {
             const checkProduct = await Product.findOne({
                 name: name
-            })
+            });
             if (checkProduct !== null) {
                 resolve({
                     status: 'ERR',
                     message: 'The name of product is already'
-                })
+                });
+                return;
             }
-            const newProduct = await Product.create({
+            const createdProduct = await Product.create({
                 name,
                 images,
                 type,
@@ -24,18 +27,29 @@ const createProduct = (newProduct) => {
                 sizes,
                 description,
                 discount
-            })
-            if (newProduct) {
+            });
+            if (createdProduct) {
+                // Gửi hình ảnh và ID sản phẩm tới URL chỉ định
+                try {
+                    const response = await axios.post(`${process.env.Flask_Server}/create`, {
+                        id: createdProduct._id,
+                        images: createdProduct.images
+                    });
+                    console.log('Response from server:', response.data);
+                } catch (error) {
+                    console.error('Error sending data to server:', error);
+                }
+
                 resolve({
                     status: 'OK',
                     message: 'SUCCESS',
-                    data: newProduct
-                })
+                    data: createdProduct
+                });
             }
         } catch (e) {
-            reject(e)
+            reject(e);
         }
-    })
+    });
 }
 
 const updateProduct = (id, data) => {
