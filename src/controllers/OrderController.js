@@ -230,7 +230,7 @@ const getRevenueInRange = async (req, res) => {
         // Convert startDate and endDate from strings to Date objects
         const start = new Date(startDate);
         const end = new Date(endDate);
-
+        end.setDate(end.getDate() + 1);
         // Log dates for debugging
         console.log(`Start Date: ${start}, End Date: ${end}`);
 
@@ -293,7 +293,7 @@ const searchOrdersByStatus = async (req, res) => {
                 orders = await Order.find({ user: userId, isPaid: true, isCancel: false }).sort({ createdAt: -1 });
                 break;
             case 'not_shipped':
-                orders = await Order.find({ user: userId, deliveryStatus: 'not_deliveredl', isCancel: false }).sort({ createdAt: -1 });
+                orders = await Order.find({ user: userId, deliveryStatus: 'not_delivered', isCancel: false }).sort({ createdAt: -1 });
                 break;
             case 'shipping':
                 orders = await Order.find({ user: userId, deliveryStatus: 'delivering', isCancel: false }).sort({ createdAt: -1 });
@@ -314,6 +314,25 @@ const searchOrdersByStatus = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
+const ratioCancelled = async (req, res) => {
+    try {
+        // Query database to get total number of orders
+        const totalOrdersCount = await Order.countDocuments();
+
+        // Query database to get cancelled orders count
+        const cancelledOrdersCount = await Order.countDocuments({ isCancel: true });
+
+        // Calculate cancellation ratio
+        const cancellationRatio = (cancelledOrdersCount / totalOrdersCount) * 100;
+
+        // Send data as JSON response
+        const roundedCancellationRatio = Math.round(cancellationRatio * 10) / 10;
+        res.json({ roundedCancellationRatio });
+    } catch (error) {
+        console.error('Error fetching cancellation ratio:', error);
+        res.status(404).json({ error: 'Internal server error' });
+    }
+};
 
 
 
@@ -329,6 +348,7 @@ module.exports = {
     getTotalRevenueAndOrders,
     getRevenueInRange,
     searchOrdersByStatus,
-    cancelOrderDetailsAdmin
+    cancelOrderDetailsAdmin,
+    ratioCancelled
 
 }

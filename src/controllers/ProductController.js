@@ -296,7 +296,8 @@ const searchImage = async (req, res) => {
         // Extract IDs from the response
         const { data } = response.data;
 
-        // console.log(data)
+        console.log(data)
+
         if (!data || !Array.isArray(data)) {
             throw new Error('Invalid response format');
         }
@@ -363,6 +364,17 @@ async function searchProducts(req, res) {
         });
     }
 }
+const getTopSellingProducts = async (req, res) => {
+    try {
+        const topSellingProducts = await Product.find()
+            .sort({ selled: -1 }) // Sắp xếp theo số lượng đã bán giảm dần
+            .limit(5); // Giới hạn số lượng sản phẩm trả về là 10
+
+        res.status(200).json({ success: true, data: topSellingProducts });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
 module.exports = {
     createProduct,
     updateProduct,
@@ -380,6 +392,7 @@ module.exports = {
     searchImage,
     getTotalProducts,
     getProductByCategory,
-    searchProducts
+    searchProducts,
+    getTopSellingProducts
 
 }

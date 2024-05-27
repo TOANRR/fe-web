@@ -116,6 +116,13 @@ const deleteUser = (id) => {
                     message: 'The user is not defined'
                 })
             }
+            if (checkUser.isAdmin == true) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Cannot delete an admin user'
+                });
+                return;
+            }
             const result = await Review.deleteMany({ user: id });
             console.log(`${result.deletedCount} review(s) deleted.`);
             await User.findByIdAndDelete(id)
@@ -152,7 +159,7 @@ const getDetailsUser = (id) => {
             if (user === null) {
                 resolve({
                     status: 'ERR',
-                    message: 'The user is not defined'
+                    message: 'Không tồn tại người dùng'
                 })
             }
             resolve({
@@ -168,16 +175,33 @@ const getDetailsUser = (id) => {
 const deleteManyUser = (ids) => {
     return new Promise(async (resolve, reject) => {
         try {
+            // Tìm tất cả người dùng với các ID được cung cấp
+            const users = await User.find({ _id: { $in: ids } });
 
-            await User.deleteMany({ _id: ids })
+            // Kiểm tra xem có bất kỳ người dùng nào là admin không
+            const admins = users.filter(user => user.isAdmin === true);
+
+            if (admins.length > 0) {
+                resolve({
+                    status: 'ERR',
+                    message: 'Không thể xóa admin'
+                });
+                return;
+            }
+
+            // Xóa các bài đánh giá của người dùng
+            await Review.deleteMany({ user: { $in: ids } });
+
+            // Xóa các người dùng không phải admin
+            await User.deleteMany({ _id: { $in: ids } });
             resolve({
                 status: 'OK',
-                message: 'Delete user success',
-            })
+                message: 'Xóa người dùng thành công',
+            });
         } catch (e) {
-            reject(e)
+            reject(e);
         }
-    })
+    });
 }
 module.exports = {
     createUser, loginUser, updateUser, deleteUser, getAllUser, getDetailsUser, deleteManyUser
