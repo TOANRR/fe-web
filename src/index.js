@@ -8,21 +8,21 @@ const cookieParser = require("cookie-parser");
 dotenv.config()
 require('./passport')
 const app = express()
-const fs = require('fs');
+// const fs = require('fs');
 
-// Hàm để tái tải lại biến môi trường từ file .env
-const reloadEnv = () => {
-    // Đọc lại nội dung của file .env
-    const envConfig = dotenv.parse(fs.readFileSync('.env'));
+// // Hàm để tái tải lại biến môi trường từ file .env
+// const reloadEnv = () => {
+//     // Đọc lại nội dung của file .env
+//     const envConfig = dotenv.parse(fs.readFileSync('.env'));
 
-    // Gán lại giá trị của các biến môi trường
-    for (const key in envConfig) {
-        process.env[key] = envConfig[key];
-    }
-};
+//     // Gán lại giá trị của các biến môi trường
+//     for (const key in envConfig) {
+//         process.env[key] = envConfig[key];
+//     }
+// };
 
-// Sử dụng hàm reloadEnv để tái tải lại biến môi trường
-reloadEnv();
+// // Sử dụng hàm reloadEnv để tái tải lại biến môi trường
+// reloadEnv();
 // console.log(`${process.env.MONGO_DB}`)
 // console.log(process.env)
 const port = process.env.PORT || 3001
