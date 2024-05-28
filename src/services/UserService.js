@@ -98,6 +98,7 @@ const updateUser = (id, data) => {
                 message: 'SUCCESS',
                 data: updatedUser
             })
+            console.log("update:", updatedUser)
         } catch (e) {
             reject(e)
         }
@@ -167,6 +168,7 @@ const getDetailsUser = (id) => {
                 message: 'SUCESS',
                 data: user
             })
+            console.log(user)
         } catch (e) {
             reject(e)
         }

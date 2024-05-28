@@ -1,6 +1,20 @@
 const Order = require('../models/OrderModel');
 const OrderService = require('../services/OrderService')
+const { ObjectId } = require('mongodb');
 
+const getNewObjectId = (req, res) => {
+    try {
+        // Tạo một ObjectId mới
+        const newObjectId = new ObjectId();
+
+        // Trả về ObjectId mới trong phản hồi
+        res.status(200).json({ success: true, objectId: newObjectId });
+    } catch (error) {
+        // Xử lý lỗi nếu có
+        console.error('Error creating new ObjectId:', error);
+        res.status(404).json({ success: false, error: 'Internal server error' });
+    }
+};
 const createOrder = async (req, res) => {
     try {
         let shipping = false;
@@ -349,6 +363,7 @@ module.exports = {
     getRevenueInRange,
     searchOrdersByStatus,
     cancelOrderDetailsAdmin,
-    ratioCancelled
+    ratioCancelled,
+    getNewObjectId
 
 }

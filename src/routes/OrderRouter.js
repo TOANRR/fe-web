@@ -17,5 +17,7 @@ router.post('/update-order/:id', authMiddleWare, OrderController.updateOrder)
 router.get('/get-revenue-day', authMiddleWare, OrderController.getRevenueInRange)
 router.get('/get-order-status/:id', authUserMiddleWare, OrderController.searchOrdersByStatus)
 router.get('/get-cancelled-ratio', OrderController.ratioCancelled)
+router.get('/get-new-id/:id', authUserMiddleWare, OrderController.getNewObjectId)
+
 
 module.exports = router
