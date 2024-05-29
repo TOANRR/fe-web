@@ -139,6 +139,7 @@ const refreshToken = async (req, res) => {
             })
         }
         const response = await JwtService.refreshTokenJwtService(token)
+        console.log(response)
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({

@@ -168,7 +168,7 @@ const getDetailsUser = (id) => {
                 message: 'SUCESS',
                 data: user
             })
-            console.log(user)
+            // console.log(user)
         } catch (e) {
             reject(e)
         }
