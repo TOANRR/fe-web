@@ -14,7 +14,7 @@ const genneralRefreshToken = async (payload) => {
     console.log('payload refresh', payload);
     const refresh_token = jwt.sign({
         ...payload
-    }, process.env.REFRESH_TOKEN, { expiresIn: '7d' })
+    }, process.env.REFRESH_TOKEN, { expiresIn: '24h' })
 
     return refresh_token
 }
