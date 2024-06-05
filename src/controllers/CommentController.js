@@ -38,7 +38,7 @@ exports.deleteComment = async (req, res) => {
         if (!deletedComment) {
             return res.status(404).json({ message: 'Comment not found' });
         }
-        res.json(deletedComment);
+        res.json({ success: true, deletedComment });
     } catch (error) {
         console.error('Error deleting comment:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -48,7 +48,15 @@ exports.deleteComment = async (req, res) => {
 // Controller để lấy tất cả các comment
 exports.getAllComments = async (req, res) => {
     try {
-        const comments = await Comment.find();
+        const comments = await Comment.find().populate({
+            path: 'author',
+            select: 'name email avatar' // Chỉ lấy thông tin name, email, avatar của tác giả
+        })
+            .populate({
+                path: 'articleId',
+                model: 'Article', // Tên của model Article
+                select: 'title' // Chỉ lấy thông tin title của bài báo
+            }).sort({ createdAt: -1 });
         res.json(comments);
     } catch (error) {
         console.error('Error fetching comments:', error);
