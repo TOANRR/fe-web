@@ -3,6 +3,7 @@ const Card = require("../models/CardModel")
 const Order = require("../models/OrderModel")
 const Product = require("../models/ProductModel")
 const { sendEmailCreateOrder } = require("./EmailService")
+const User = require("../models/UserModel")
 // const EmailService = require("../services/EmailService")
 
 const createOrder = (newOrder) => {
@@ -30,7 +31,7 @@ const createOrder = (newOrder) => {
                     { new: true }
                 )
 
-                console.log(productData)
+                // console.log(productData)
                 if (productData) {
                     return {
                         status: 'OK',
@@ -72,6 +73,8 @@ const createOrder = (newOrder) => {
                 })
             } else {
                 if (id) {
+                    const userEmail = await User.findById(user)
+
                     const createdOrder = await Order.create({
                         _id: id,
                         orderItems,
@@ -88,7 +91,7 @@ const createOrder = (newOrder) => {
                         isPaid, paidAt, delivery
                     })
                     if (createdOrder) {
-                        // await sendEmailCreateOrder(email, orderItems, totalPrice)
+                        await sendEmailCreateOrder(userEmail.email, orderItems, totalPrice)
                         resolve({
                             status: 'OK',
                             message: 'success',
@@ -112,7 +115,7 @@ const createOrder = (newOrder) => {
                         isPaid, paidAt, delivery
                     })
                     if (createdOrder) {
-                        // await sendEmailCreateOrder(email, orderItems, totalPrice)
+                        await sendEmailCreateOrder(email, orderItems, totalPrice)
                         resolve({
                             status: 'OK',
                             message: 'success',
@@ -370,7 +373,7 @@ const cancelOrderDetailsAdmin = (id, cancelReason) => {
                         { isCancel: true, cancelReason: cancelReason }, // Dữ liệu cập nhật
                         { new: true } // Tùy chọn để trả về bản ghi đã được cập nhật
                     );
-                    console.log(order)
+                    // console.log(order)
                     if (order === null) {
                         resolve({
                             status: 'ERR',
